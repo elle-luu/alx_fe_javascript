@@ -272,7 +272,7 @@ async function syncQuotes() {
     filterQuotes();
 
     syncStatus.textContent =
-      "Server sync complete. Conflicts resolved (server data applied).";
+      "Quotes synced with server!";
   } catch (error) {
     syncStatus.textContent = "Sync failed. Try again.";
   }
