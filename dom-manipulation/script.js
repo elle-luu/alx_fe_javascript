@@ -237,7 +237,7 @@ function addQuote() {
 // =======================
 // SYNC WITH SERVER
 // =======================
-async function syncWithServer() {
+async function syncQuotes() {
   syncStatus.textContent = "Syncing with server...";
 
   try {
@@ -282,7 +282,7 @@ async function syncWithServer() {
 // =======================
 // PERIODIC SERVER POLLING
 // =======================
-setInterval(syncWithServer, 60000); // every 60 seconds
+setInterval(syncQuotes, 60000); // every 60 seconds
 
 
 // =======================
