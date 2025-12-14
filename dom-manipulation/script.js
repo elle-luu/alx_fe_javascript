@@ -249,6 +249,18 @@ async function syncWithServer() {
       category: "Server"
     }));
 
+    async function fetchQuotesFromServer() {
+  const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+  const data = await response.json();
+
+  // Convert server data into quote format
+  return data.slice(0, 5).map(post => ({
+    text: post.title,
+    category: "Server"
+  }));
+}
+
+
     // Conflict resolution: SERVER WINS
     quotes = serverQuotes;
     saveQuotes();
