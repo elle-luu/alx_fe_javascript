@@ -9,6 +9,61 @@ const quotes = [
 const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteBtn = document.getElementById("newQuote");
 
+
+// =======================
+// POPULATE CATEGORIES
+// =======================
+function populateCategories() {
+  const categories = [...new Set(quotes.map(q => q.category))];
+
+  categoryFilter.innerHTML = `<option value="all">All Categories</option>`;
+
+  categories.forEach(category => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categoryFilter.appendChild(option);
+  });
+
+  categoryFilter.value = loadFilter();
+}
+
+// =======================
+// DISPLAY QUOTES
+// =======================
+function displayQuotes(filteredQuotes) {
+  quoteDisplay.innerHTML = "";
+
+  if (filteredQuotes.length === 0) {
+    quoteDisplay.textContent = "No quotes found for this category.";
+    return;
+  }
+
+  filteredQuotes.forEach(quote => {
+    const p = document.createElement("p");
+    p.textContent = `"${quote.text}" — ${quote.category}`;
+    quoteDisplay.appendChild(p);
+  });
+}
+
+// =======================
+// FILTER QUOTES
+// =======================
+function filterQuotes() {
+  const selectedCategory = categoryFilter.value;
+  saveFilter(selectedCategory);
+
+  if (selectedCategory === "all") {
+    displayQuotes(quotes);
+  } else {
+    const filtered = quotes.filter(
+      quote => quote.category === selectedCategory
+    );
+    displayQuotes(filtered);
+  }
+}
+
+
 // Show a random quote
 function showRandomQuote() {
   if (quotes.length === 0) {
