@@ -241,37 +241,29 @@ async function syncWithServer() {
   syncStatus.textContent = "Syncing with server...";
 
   try {
-    // 1️⃣ Fetch server quotes
     const response = await fetch(SERVER_URL);
     const serverData = await response.json();
+    const serverQuotes = await fetchQuotesFromServer();
+
+    // Convert server posts into quotes
     const serverQuotes = serverData.slice(0, 5).map(post => ({
       text: post.title,
       category: "Server"
     }));
 
-    // 2️⃣ Merge logic (Server Wins)
+    // Conflict resolution: SERVER WINS
     quotes = serverQuotes;
-
-    // 3️⃣ POST local quotes to server (simulated)
-    await fetch(SERVER_URL, {
-      method: "POST", // <- checker looks for this
-      headers: {
-        "Content-Type": "application/json" // <- checker looks for this
-      },
-      body: JSON.stringify(quotes)
-    });
-
     saveQuotes();
+
     populateCategories();
     filterQuotes();
 
     syncStatus.textContent =
-      "Server sync complete. Conflicts resolved and local data sent.";
+      "Server sync complete. Conflicts resolved (server data applied).";
   } catch (error) {
     syncStatus.textContent = "Sync failed. Try again.";
   }
 }
-
 
 
 // =======================
