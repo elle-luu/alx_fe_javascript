@@ -5,6 +5,8 @@ const quotes = [
   { text: "Fear is temporary. Regret is permanent.", category: "Life" }
 ];
 
+const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
+
 // DOM references
 const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteBtn = document.getElementById("newQuote");
@@ -144,6 +146,14 @@ function loadQuotes() {
   return storedQuotes ? JSON.parse(storedQuotes) : [];
 }
 
+function saveFilter(category) {
+  localStorage.setItem("selectedCategory", category);
+}
+
+function loadFilter() {
+  return localStorage.getItem("selectedCategory") || "all";
+}
+
 // =======================
 // QUOTE DATA
 // =======================
@@ -223,6 +233,41 @@ function addQuote() {
 
   showRandomQuote();
 }
+
+// SYNC WITH SERVER
+// =======================
+async function syncWithServer() {
+  syncStatus.textContent = "Syncing with server...";
+
+  try {
+    const response = await fetch(SERVER_URL);
+    const serverData = await response.json();
+
+    // Convert server posts into quotes
+    const serverQuotes = serverData.slice(0, 5).map(post => ({
+      text: post.title,
+      category: "Server"
+    }));
+
+    // Conflict resolution: SERVER WINS
+    quotes = serverQuotes;
+    saveQuotes();
+
+    populateCategories();
+    filterQuotes();
+
+    syncStatus.textContent =
+      "Server sync complete. Conflicts resolved (server data applied).";
+  } catch (error) {
+    syncStatus.textContent = "Sync failed. Try again.";
+  }
+}
+
+// =======================
+// PERIODIC SERVER POLLING
+// =======================
+setInterval(syncWithServer, 60000); // every 60 seconds
+
 
 // =======================
 // EXPORT QUOTES AS JSON
