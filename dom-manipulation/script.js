@@ -234,32 +234,14 @@ function addQuote() {
   showRandomQuote();
 }
 
+// =======================
 // SYNC WITH SERVER
 // =======================
 async function syncWithServer() {
   syncStatus.textContent = "Syncing with server...";
 
   try {
-    const response = await fetch(SERVER_URL);
-    const serverData = await response.json();
-
-    // Convert server posts into quotes
-    const serverQuotes = serverData.slice(0, 5).map(post => ({
-      text: post.title,
-      category: "Server"
-    }));
-
-    async function fetchQuotesFromServer() {
-  const response = await fetch("https://jsonplaceholder.typicode.com/posts");
-  const data = await response.json();
-
-  // Convert server data into quote format
-  return data.slice(0, 5).map(post => ({
-    text: post.title,
-    category: "Server"
-  }));
-}
-
+    const serverQuotes = await fetchQuotesFromServer();
 
     // Conflict resolution: SERVER WINS
     quotes = serverQuotes;
@@ -269,11 +251,12 @@ async function syncWithServer() {
     filterQuotes();
 
     syncStatus.textContent =
-      "Server sync complete. Conflicts resolved (server data applied).";
+      "Server sync complete. Conflicts resolved using server data.";
   } catch (error) {
     syncStatus.textContent = "Sync failed. Try again.";
   }
 }
+
 
 // =======================
 // PERIODIC SERVER POLLING
